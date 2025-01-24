@@ -30,6 +30,10 @@ jobs:
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
+      
+      - name: Create terraform.tfvars (with base64 decoding)
+        run: |
+          echo "${{ secrets.TERRAFORM_TFVARS }}" | base64 --decode > terraform.tfvars
 
       - name: Terraform Init
         run: terraform init
