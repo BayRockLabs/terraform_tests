@@ -40,7 +40,7 @@ jobs:
 
       - name: Terraform Apply
         if: github.event.inputs.action == 'apply'
-        run: terraform apply -auto-approve -lock=false
+        run: terraform apply -auto-approve -lock=false -var-file="terraform.tfvars"
         env:
           ARM_SAS_TOKEN: ${{ secrets.ARM_SAS_TOKEN }}
 
