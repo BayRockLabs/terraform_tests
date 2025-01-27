@@ -31,7 +31,7 @@ jobs:
 
       - name: Create terraform.tfvars
         run: |
-          echo "${{ secrets.TERRAFORM_TFVARS }}" > terraform.tfvars
+          echo "${{ vars.TERRAFORM_TFVARS }}" > terraform.tfvars
 
       - name: Terraform Init
         run: terraform init
@@ -40,12 +40,12 @@ jobs:
 
       - name: Terraform Apply
         if: github.event.inputs.action == 'apply'
-        run: terraform apply -auto-approve
+        run: terraform apply -auto-approve -lock=false
         env:
           ARM_SAS_TOKEN: ${{ secrets.ARM_SAS_TOKEN }}
 
       - name: Terraform Destroy
         if: github.event.inputs.action == 'destroy'
-        run: terraform destroy -auto-approve
+        run: terraform destroy -auto-approve -lock=false
         env:
           ARM_SAS_TOKEN: ${{ secrets.ARM_SAS_TOKEN }}
