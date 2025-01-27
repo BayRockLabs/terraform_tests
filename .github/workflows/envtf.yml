@@ -14,7 +14,6 @@ on:
 
 jobs:
   terraform:
-    name: 'Terraform'
     runs-on: ubuntu-latest
 
     steps:
@@ -29,25 +28,23 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
 
+      - name: Create terraform.tfvars
+        run: |
+          echo "resource_group_name = \"tfResourceGroup\"" > terraform.tfvars
+          echo "location = \"East US\"" >> terraform.tfvars
+          echo "acr_name = \"c2cacr\"" >> terraform.tfvars
+          echo "acr_resource_group_name = \"c2c-demo\"" >> terraform.tfvars
+          echo "acr_login_server = \"${{ secrets.ACR_LOGIN_SERVER }}\"" >> terraform.tfvars
+          echo "acr_admin_username = \"${{ secrets.ACR_ADMIN_USERNAME }}\"" >> terraform.tfvars
+          echo "acr_admin_password = \"${{ secrets.ACR_ADMIN_PASSWORD }}\"" >> terraform.tfvars
+
       - name: Terraform Init
         run: terraform init
-        env:
-          ARM_SAS_TOKEN: ${{ secrets.ARM_SAS_TOKEN }}
 
       - name: Terraform Apply
         if: github.event.inputs.action == 'apply'
-        run: terraform apply -auto-approve -lock=false
-        env:
-          ARM_SAS_TOKEN: ${{ secrets.ARM_SAS_TOKEN }}
-          ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
-          ACR_ADMIN_USERNAME: ${{ secrets.ACR_ADMIN_USERNAME }}
-          ACR_ADMIN_PASSWORD: ${{ secrets.ACR_ADMIN_PASSWORD }}
+        run: terraform apply -auto-approve -var-file="terraform.tfvars"
 
       - name: Terraform Destroy
         if: github.event.inputs.action == 'destroy'
-        run: terraform destroy -auto-approve -lock=false
-        env:
-          ARM_SAS_TOKEN: ${{ secrets.ARM_SAS_TOKEN }}
-          ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
-          ACR_ADMIN_USERNAME: ${{ secrets.ACR_ADMIN_USERNAME }}
-          ACR_ADMIN_PASSWORD: ${{ secrets.ACR_ADMIN_PASSWORD }}
+        run: terraform destroy -auto-approve -var-file="terraform.tfvars"
