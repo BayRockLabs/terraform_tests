@@ -29,10 +29,6 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
 
-      - name: Create terraform.tfvars
-        run: |
-          echo "${{ secrets.TFVARS }}" | base64 --decode > terraform.tfvars
-
       - name: Terraform Init
         run: terraform init
         env:
@@ -40,12 +36,18 @@ jobs:
 
       - name: Terraform Apply
         if: github.event.inputs.action == 'apply'
-        run: terraform apply -auto-approve -lock=false -var-file="terraform.tfvars"
+        run: terraform apply -auto-approve -lock=false
         env:
           ARM_SAS_TOKEN: ${{ secrets.ARM_SAS_TOKEN }}
+          ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
+          ACR_ADMIN_USERNAME: ${{ secrets.ACR_ADMIN_USERNAME }}
+          ACR_ADMIN_PASSWORD: ${{ secrets.ACR_ADMIN_PASSWORD }}
 
       - name: Terraform Destroy
         if: github.event.inputs.action == 'destroy'
-        run: terraform destroy -auto-approve -lock=false -var-file="terraform.tfvars"
+        run: terraform destroy -auto-approve -lock=false
         env:
           ARM_SAS_TOKEN: ${{ secrets.ARM_SAS_TOKEN }}
+          ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
+          ACR_ADMIN_USERNAME: ${{ secrets.ACR_ADMIN_USERNAME }}
+          ACR_ADMIN_PASSWORD: ${{ secrets.ACR_ADMIN_PASSWORD }}
