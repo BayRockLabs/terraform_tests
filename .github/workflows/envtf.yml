@@ -31,7 +31,7 @@ jobs:
 
       - name: Create terraform.tfvars
         run: |
-          echo "${{ vars.TFVARS }}" | base64 --decode > terraform.tfvars
+          echo "${{ secrets.TFVARS }}" | base64 --decode > terraform.tfvars
 
       - name: Terraform Init
         run: terraform init
@@ -46,6 +46,6 @@ jobs:
 
       - name: Terraform Destroy
         if: github.event.inputs.action == 'destroy'
-        run: terraform destroy -auto-approve -lock=false
+        run: terraform destroy -auto-approve -lock=false -var-file="terraform.tfvars"
         env:
           ARM_SAS_TOKEN: ${{ secrets.ARM_SAS_TOKEN }}
