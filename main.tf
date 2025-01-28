@@ -18,21 +18,6 @@ variable "acr_resource_group_name" {
   type        = string
 }
 
-variable "acr_login_server" {
-  description = "The login server of the Azure Container Registry"
-  type        = string
-}
-
-variable "acr_admin_username" {
-  description = "The admin username of the Azure Container Registry"
-  type        = string
-}
-
-variable "acr_admin_password" {
-  description = "The admin password of the Azure Container Registry"
-  type        = string
-}
-
 variable "container_apps" {
   description = "List of container apps with their respective image names, tags, and ports"
   type = list(object({
