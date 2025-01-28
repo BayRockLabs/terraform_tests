@@ -28,9 +28,9 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
 
-      - name: Create terraform.tfvars
+      - name: Decode terraform.tfvars
         run: |
-          echo "${{ secrets.TFVARS_CONTENT }}" > terraform.tfvars
+          echo "${{ secrets.TFVARS_BASE64 }}" | base64 --decode > terraform.tfvars
 
       - name: Enable Terraform Debug Logging
         run: echo "TF_LOG=DEBUG" >> $GITHUB_ENV
