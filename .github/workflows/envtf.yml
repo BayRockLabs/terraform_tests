@@ -28,6 +28,20 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
 
+      - name: Create terraform.tfvars
+        run: |
+          echo "resource_group_name = \"${{ secrets.RESOURCE_GROUP_NAME }}\"" > terraform.tfvars
+          echo "location = \"${{ secrets.LOCATION }}\"" >> terraform.tfvars
+          echo "acr_name = \"${{ secrets.ACR_NAME }}\"" >> terraform.tfvars
+          echo "acr_resource_group_name = \"${{ secrets.ACR_RESOURCE_GROUP_NAME }}\"" >> terraform.tfvars
+          echo "acr_login_server = \"${{ secrets.ACR_LOGIN_SERVER }}\"" >> terraform.tfvars
+          echo "container_apps = ${{ secrets.CONTAINER_APPS_JSON }}" >> terraform.tfvars
+          echo "env_vars = ${{ secrets.ENV_VARS_JSON }}" >> terraform.tfvars
+
+      - name: Check if terraform.tfvars exists
+        run: |
+          ls -l terraform.tfvars  # This will list the file to verify it's there
+
       - name: Terraform Init
         run: terraform init
         env:
@@ -48,3 +62,4 @@ jobs:
           ARM_SAS_TOKEN: ${{ secrets.ARM_SAS_TOKEN }}
           TF_VAR_acr_admin_username: ${{ secrets.ACR_ADMIN_USERNAME }}  # Inject sensitive value here
           TF_VAR_acr_admin_password: ${{ secrets.ACR_ADMIN_PASSWORD }}  # Inject sensitive value here
+
