@@ -32,6 +32,9 @@ jobs:
         run: |
           echo "${{ secrets.TFVARS_CONTENT }}" > terraform.tfvars
 
+      - name: Enable Terraform Debug Logging
+        run: echo "TF_LOG=DEBUG" >> $GITHUB_ENV
+
       - name: Terraform Init
         run: terraform init
         env:
@@ -45,6 +48,8 @@ jobs:
           ACR_ADMIN_USERNAME: ${{ secrets.ACR_ADMIN_USERNAME }}
           ACR_ADMIN_PASSWORD: ${{ secrets.ACR_ADMIN_PASSWORD }}
           ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
+          ACR_NAME: ${{ secrets.ACR_NAME }}
+          ACR_RESOURCE_GROUP_NAME: ${{ secrets.ACR_RESOURCE_GROUP_NAME }}
 
       - name: Terraform Destroy
         if: github.event.inputs.action == 'destroy'
@@ -54,3 +59,5 @@ jobs:
           ACR_ADMIN_USERNAME: ${{ secrets.ACR_ADMIN_USERNAME }}
           ACR_ADMIN_PASSWORD: ${{ secrets.ACR_ADMIN_PASSWORD }}
           ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
+          ACR_NAME: ${{ secrets.ACR_NAME }}
+          ACR_RESOURCE_GROUP_NAME: ${{ secrets.ACR_RESOURCE_GROUP_NAME }}
