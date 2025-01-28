@@ -1,5 +1,3 @@
-# This is a basic workflow to help you get started with Actions
-
 name: CI
 
 on:
@@ -16,7 +14,6 @@ on:
 
 jobs:
   terraform:
-    name: 'Terraform'
     runs-on: ubuntu-latest
 
     steps:
@@ -31,6 +28,12 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
 
+      - name: Decode terraform.tfvars
+        run: echo "${{ secrets.TFVARS_BASE64 }}" | base64 --decode > terraform.tfvars
+
+      - name: Enable Terraform Debug Logging
+        run: echo "TF_LOG=DEBUG" >> $GITHUB_ENV
+
       - name: Terraform Init
         run: terraform init
         env:
@@ -38,12 +41,12 @@ jobs:
 
       - name: Terraform Apply
         if: github.event.inputs.action == 'apply'
-        run: terraform apply -auto-approve
+        run: terraform apply -auto-approve -lock=false -var-file="terraform.tfvars"
         env:
           ARM_SAS_TOKEN: ${{ secrets.ARM_SAS_TOKEN }}
 
       - name: Terraform Destroy
         if: github.event.inputs.action == 'destroy'
-        run: terraform destroy -auto-approve
+        run: terraform destroy -auto-approve -lock=false -var-file="terraform.tfvars"
         env:
           ARM_SAS_TOKEN: ${{ secrets.ARM_SAS_TOKEN }}
